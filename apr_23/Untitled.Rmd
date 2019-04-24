@@ -1,0 +1,50 @@
+---
+title: "April 23, Anime"
+author: "Gracie White"
+date: "4/23/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, include=FALSE, message=FALSE}
+
+library(tidyverse)
+library(lubridate)
+library(here)
+library(beyonce)
+
+tidy_anime <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-04-23/tidy_anime.csv")
+
+tidy <- tidy_anime %>% 
+  select(-synopsis, -background, -related, -title_japanese, -title_synonyms) %>% 
+  filter(episodes >= 50) %>% 
+  filter(genre == "Action" | genre == "Adventure" | genre == "Drama" | genre == "Comedy" | genre == "Supernatural") %>%
+  filter(rating != "None")
+
+
+
+```
+
+A graph!
+
+```{r, echo=FALSE}
+
+violence_plot <- ggplot(tidy, aes(x = rating, y = popularity), group_by(genre)) +
+  geom_point(size = 0.01) +
+  geom_jitter(aes(color = genre), size = 3, alpha = .75) +
+  theme_classic() +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_color_manual(values = beyonce_palette(18), name = "Genre") +
+  labs(y = "Violence Rating", x = "Popularity", title = "Violence in Anime Compared to Popularity \n(No Correlation, Just Fun Colors)") +
+  theme(axis.text.x = element_text(angle = 18, hjust = 0.4, vjust = 0.4), plot.title = element_text(hjust = 0.5))
+  
+
+
+violence_plot
+
+```
+
